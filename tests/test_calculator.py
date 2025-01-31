@@ -117,9 +117,14 @@
 
 # test_calculator.py
 import pytest
-from calculator import *
+from calculator import (
+    add_numbers,
+    multiply_numbers,
+    divide_numbers,
+    subtract_numbers,
+    CalculatorError
+)
 
-# New comprehensive test suite
 class TestCalculator:
     @pytest.mark.smoke
     def test_basic_operations(self):
@@ -136,8 +141,10 @@ class TestCalculator:
         assert multiply_numbers(0, 5) == 0
         assert subtract_numbers(-1, -1) == 0
 
-        with pytest.raises(ZeroDivisionError):
+        # Updated to use CalculatorError instead of ZeroDivisionError
+        with pytest.raises(CalculatorError) as exc_info:
             divide_numbers(5, 0)
+        assert "Division by zero is not allowed" in str(exc_info.value)
 
     @pytest.mark.parametrize("operation,a,b,expected", [
         (add_numbers, 5, 5, 10),
@@ -149,13 +156,20 @@ class TestCalculator:
         """Test multiple operations with different values"""
         assert operation(a, b) == expected
 
+    @pytest.mark.error_handling
     def test_error_handling(self):
         """Test error handling and logging"""
-        with pytest.raises(CalculatorError):
+        # Test division by zero
+        with pytest.raises(CalculatorError) as exc_info:
             divide_numbers(5, 0)
+        assert "Division by zero is not allowed" in str(exc_info.value)
 
-        with pytest.raises(CalculatorError):
+        # Test type error
+        with pytest.raises(CalculatorError) as exc_info:
             add_numbers("5", 5)
+        assert "Invalid input types" in str(exc_info.value)
 
-        with pytest.raises(CalculatorError):
+        # Test None value
+        with pytest.raises(CalculatorError) as exc_info:
             multiply_numbers(None, 5)
+        assert "Invalid input types" in str(exc_info.value)
