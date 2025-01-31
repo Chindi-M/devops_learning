@@ -148,3 +148,14 @@ class TestCalculator:
     def test_parametrized_operations(self, operation, a, b, expected):
         """Test multiple operations with different values"""
         assert operation(a, b) == expected
+
+    def test_error_handling(self):
+        """Test error handling and logging"""
+        with pytest.raises(CalculatorError):
+            divide_numbers(5, 0)
+
+        with pytest.raises(CalculatorError):
+            add_numbers("5", 5)
+
+        with pytest.raises(CalculatorError):
+            multiply_numbers(None, 5)
